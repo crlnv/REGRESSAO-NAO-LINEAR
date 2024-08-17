@@ -1,0 +1,345 @@
+\documentclass[xcolor=dvipsnames]{beamer}
+\usepackage{natbib}
+\usepackage{bm} % no preâmbulo
+\usepackage{listings}
+\usepackage[svgnames]{xcolor}
+\usepackage{lstautogobble} % Provides autogobble, which is useful to remove indentation based on first line
+\usepackage{graphicx} % Pacote necessário para inserir imagens
+
+
+\lstset{language=R,
+    basicstyle=\small\ttfamily,
+    stringstyle=\color{DarkGreen},
+    otherkeywords={0,1,2,3,4,5,6,7,8,9},
+    morekeywords={TRUE,FALSE},
+    deletekeywords={data,frame,length,as,character},
+    keywordstyle=\color{blue},
+    commentstyle=\color{DarkGreen},
+}
+
+\usetheme{Madrid}
+\useoutertheme{miniframes} % Alternatively: miniframes, infolines, split
+\useinnertheme{circles}
+
+\definecolor{IITHorange}{RGB}{243, 130, 33} % UBC Blue (primary)
+\definecolor{IITHyellow}{RGB}{254, 203, 10} % UBC Grey (secondary)
+
+\setbeamercolor{palette primary}{bg=IITHorange,fg=white}
+\setbeamercolor{palette secondary}{bg=IITHorange,fg=white}
+\setbeamercolor{palette tertiary}{bg=IITHorange,fg=white}
+\setbeamercolor{palette quaternary}{bg=IITHorange,fg=white}
+\setbeamercolor{structure}{fg=IITHorange} % itemize, enumerate, etc
+\setbeamercolor{section in toc}{fg=IITHorange} % TOC sections
+\setbeamercolor{alerted text}{fg=orange}
+
+% Override palette coloring with secondary
+\setbeamercolor{subsection in head/foot}{bg=IITHyellow,fg=white}
+
+\title[]{Regressão Não Linear}
+\date{\today}
+\author[Caroline Vasconcelos]
+{}
+\institute[]{Modelos de Regressão}
+
+\begin{document}
+	
+	\begin{frame}
+		\titlepage
+	\end{frame}
+
+        \begin{frame}{Conceito}
+
+        \textit{"Qualquer modelo que não seja linear nos parâmetros desconhecidos é um \textbf{modelo de regressão não linear}"} (Montgomery, 2006).   
+        \end{frame}
+
+        \begin{frame}{Conceito}
+        Neste caso, pode-se seguir três caminhos diferentes:
+        \begin{enumerate}
+            \item  linearizar a relação transformando os dados;
+            \item ajustar modelos polinomiais ou splines complexos aos dados;
+            \item \textbf{ajustar funções não lineares aos dados.}
+        \end{enumerate}
+            
+        \end{frame}
+
+         \begin{frame}{Exemplo}
+         O modelo
+
+       \alert{$$\textbf{y} =\theta_{1}e^{\theta_{2}x}+\epsilon$$}
+
+        é não linear nos parâmetros desconhecidos \alert{$\theta_{1}$} e \alert{$\theta_{2}$}. Podendo ser escrito também como
+
+        \alert{$$\textbf{y} = f(\textbf{x},\bm{\theta}) + \epsilon$$}
+            
+        \end{frame}
+
+        \begin{frame}
+  \frametitle{Conceito}
+
+  Nos modelos de regressão não linear pelo menos uma das derivadas da função esperança $f(\textbf{x},\bm{\theta})$ depende de um dos parâmetros. Na regressão linear essas derivadas não são função de tais parâmetros desconhecidos.
+  
+  \begin{columns}[T] % alinhamento no topo
+    \begin{column}{0.475\textwidth} % largura da primeira coluna
+      \begin{block}{Regressão Linear}
+      Modelo:
+      $$y = \beta_{0}+\beta_{1}x_{1}+\beta_{2}x_{2}+...+\beta_{k}x_{k}+\epsilon$$\\
+
+      Função esperança:\\
+      $$f(\textbf{x},\bm{\beta})$$
+          
+      Derivada: $\frac{\partial f(\textbf{x},\bm{\beta})}{\partial \beta_{j}} = x_{j}$
+       
+        
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.475\textwidth} % largura da segunda coluna
+      \begin{block}{Regressão Não Linear}
+        Modelo:
+        $$y = \theta_{1}e^{\theta_{2}x}+\epsilon$$
+        
+        Função esperança:\\
+        $$f(\textbf{x},\bm{\theta})$$
+
+        Derivadas: \\
+         $\frac{\partial f(\textbf{x},\bm{\theta})}{\partial \theta_{1}} = e^{\theta_{2}x}$;
+         $\frac{\partial f(\textbf{x},\bm{\theta})}{\partial \theta_{2}} = \theta_{1}xe^{\theta_{2}x}$   
+        
+      \end{block}
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+
+       \begin{frame}{Vantagens}
+       De maneira resumida, os modelos não lineares (MNL) têm as seguintes vantagens sobre os modelos lineares (ML):
+         \begin{enumerate}
+             \item Sua escolha têm sustentação baseada em teoria ou princípios mecanísticos (físicos, químicos ou biológicos) ou qualquer outra informação prévia;
+             \item Certos parâmetros são quantidade de interesse para o pesquisador providos de interpretação;
+             \item São parcimoniosos pois tipicamente possuem menos parâmetros;
+             \item Partem do conhecimento do pesquisador sobre o fenômeno alvo.
+
+         \end{enumerate}
+           
+       \end{frame}
+
+       \begin{frame}{Desvantagens}
+          \begin{enumerate}
+              \item Requerem procedimentos iterativos de estimação baseados no fornecimento de valores iniciais para os parâmetros;
+              \item Métodos de inferência são aproximados;
+              \item Exigem conhecimento do pesquisador sobre o fenômeno alvo.
+          \end{enumerate}
+           
+       \end{frame}
+
+       \begin{frame}{Modelos de Regressão Não Linear: nota}
+
+      \textbf{Idealmente} um modelo de regressão não linear é escolhido com base em considerações teóricas sobre o problema, o que às vezes faz com que eles sejam usados em situações muito específicas.
+
+      \vspace{0.5cm}
+      Nesse caso, as aplicações mais comuns estão relacionadas a \textbf{modelos de crescimento}, tipicamente na área da \textbf{biologia} onde plantas e organismo crescem com o tempo.
+           
+       \end{frame}
+
+       \begin{frame}{Estudo de caso: uma curva de degradação}
+
+       Um solo foi enriquecido com o herbicida metramitron até a concentração de 100 ng/g. Foi então colocado em 24 recipientes de alumínio, dentro de uma câmara climática a 20°C. Foram selecionados 3 recipientes aleatoriamente em 8 momentos diferentes e a concentração residual de metamitron foi medida.
+           
+       \end{frame}
+
+ 
+        \begin{frame}[fragile]{Dados}
+           \begin{lstlisting}[language=R]
+x <- "https://www.casaonofri.it/_datasets/degradation.csv"
+dataset <- read.csv(x, header=T)
+head(dataset, 10)
+##    Time   Conc
+## 1     0  96.40
+## 2    10  46.30
+## 3    20  21.20
+## 4    30  17.89
+## 5    40  10.10
+## 6    50   6.90
+## 7    60   3.50
+## 8    70   1.90
+## 9     0 102.30
+## 10   10  49.20
+           \end{lstlisting}
+        \end{frame}
+
+        \begin{frame}{Gráfico de dispersão}
+           \begin{figure}[h]
+          
+           \includegraphics[height=6cm]{image1.png}
+            \caption{Degradação do metamitron no solo.}
+    
+          \end{figure}
+        \end{frame}
+
+        \begin{frame}{Formas de funções}
+        
+           \begin{figure}[h]
+          
+           \includegraphics[height=6cm]{image2.png}
+            \caption{Formas das funções mais importantes.}
+    
+          \end{figure}
+        \end{frame}
+
+         \begin{frame}{Equações por trás das funções}
+        
+           \begin{figure}[h]
+          
+           \includegraphics[height=6cm]{image3.png}
+            \caption{Equações e funções no R.}
+    
+          \end{figure}
+        \end{frame}
+
+         \begin{frame}{Modelo}
+
+        \textit{$$Y_{i} = ae^{-kX_i}+\epsilon_i$$}
+
+       Onde \\
+       \textit{Y} é a \textbf{concentração no tempo} \textit{X} \\
+       \textit{a} é a \textbf{concentração inicial de metamitrona} \\
+       \textit{k} é a t\textbf{axa de degradação constante}.
+             
+         \end{frame}
+
+        \begin{frame}[fragile]{Estimação dos parâmetros: linearização}
+           \begin{lstlisting}[language=R]
+mod <- lm(log(Conc) ~ Time, data=dataset)
+summary(mod)
+## Call:
+## lm(formula = log(Conc) ~ Time, data = dataset)
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.11738 -0.09583  0.05336  0.31166  1.01243 
+
+## Coefficients:
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  4.662874   0.257325   18.12 1.04e-14 ***
+## Time        -0.071906   0.006151  -11.69 6.56e-11 ***
+## Residual standard error: 0.6905 on 22 degrees of freedom
+## Multiple R-squared:  0.8613, Adjusted R-squared:  0.855 
+## F-statistic: 136.6 on 1 and 22 DF,  p-value: 6.564e-11
+           \end{lstlisting}
+        \end{frame} 
+        
+        \begin{frame}[fragile]{Estimação dos parâmetros: linearização}
+           \begin{lstlisting}[language=R]
+par(mfrow = c(1,2))
+plot(mod, which = 1)
+plot(mod, which = 2)
+           \end{lstlisting}
+           \begin{figure}[h]
+           \includegraphics[height=5.5cm]{image4.png}        
+          \end{figure}          
+        \end{frame}
+
+         \begin{frame}[fragile]{Estimação dos parâmetros: aproximação polinomial}
+           \begin{lstlisting}[language=R]
+mod2 <- lm(Conc ~ Time + I(Time^2), data=dataset)
+pred <- predict(mod2, newdata = data.frame(Time = seq(0, 70, by = 0.1)))
+plot(Conc ~ Time, data=dataset)
+lines(pred ~ seq(0, 70, by = 0.1), col = "red")
+           \end{lstlisting}
+           \begin{figure}[h]
+           \includegraphics[height=5cm]{image5.png}        
+          \end{figure} 
+           
+        \end{frame}
+
+         \begin{frame}[fragile]{Estimação dos parâmetros: mínimos quadrados não lineares}
+           \begin{lstlisting}[language=R]
+modNlin <- nls(Conc ~ A*exp(-k*Time), 
+               start=list(A=100, k=0.05), 
+               data = dataset)
+summary(modNlin)
+
+## Formula: Conc ~ A * exp(-k * Time)
+
+## Parameters:
+##    Estimate Std. Error t value Pr(>|t|)    
+## A 99.634902   1.461047   68.19   <2e-16 ***
+## k  0.067039   0.001887   35.53   <2e-16 ***
+## 
+## Residual standard error: 2.621 on 22 degrees of freedom
+## 
+## Number of iterations to convergence: 5 
+## Achieved convergence tolerance: 4.33e-07
+           \end{lstlisting}
+        \end{frame}
+
+        \begin{frame}[fragile]{Ajuste do modelo}
+           \begin{lstlisting}[language=R]
+par(mfrow=c(1,2))
+plot(modNlin, which = 1)
+plot(modNlin, which = 2)
+           \end{lstlisting}
+           \begin{figure}[h]
+           \includegraphics[height=5cm]{image6.png}        
+          \end{figure}
+           
+        \end{frame}
+
+         \begin{frame}[fragile]{Ajuste do modelo}
+           \begin{lstlisting}[language=R]
+plot(modNlin, type = "means",
+        xlab = "Time(d)", ylab = "Concentration(ng/g)")
+           \end{lstlisting}
+           \begin{figure}[h]
+           \includegraphics[height=6cm]{image7.png}        
+          \end{figure}
+           
+        \end{frame}
+                   
+          \begin{frame}[fragile]{Medida de qualidade do ajuste}
+           \begin{lstlisting}[language=R]
+MSE <- summary(modNlin)$sigma ^ 2
+MST <- var(dataset$Conc)
+1 - MSE/MST
+## [1] 0.9936359
+           \end{lstlisting}
+        \end{frame}
+
+        \begin{frame}[fragile]{Predição}
+           \begin{lstlisting}[language=R]
+func <- list(~A * exp(-k * time))
+const <- data.frame(time = c(5, 10, 15)) 
+gnlht(modNlin, func,  const)
+##         Form          time Estimate     p-value
+## 1 A * exp(-k * time)    5 71.25873  5.340741e-28
+## 2 A * exp(-k * time)   10 50.96413  3.163518e-25
+## 3 A * exp(-k * time)   15 36.44947  6.029672e-22
+           \end{lstlisting}         
+        \end{frame}
+
+         \begin{frame}{Referências}
+         
+MONTGOMERY, Douglas C.; PECK, Elizabeth A.; VINING, G. Geoffrey. \textbf{Introduction to Linear Regression Analysis}. 4ª ed. Hoboken: John Wiley & Sons, 2006.\\
+
+\vspace{0.5cm}
+NABERGOI, Carlos. \textbf{Curso de Modelos Não Lineares em R}. Disponível em: https://www.ime.unicamp.br/~cnaber/cursomodelosnaolinearesR.pdf. Acesso em: 21 jul. 2024.\\
+
+\vspace{0.5cm}
+STATFORBIOLOGY.COM. \textbf{Nonlinear Regression}. Disponível em: https://www.statforbiology.com/-statbookeng/nonlinear-regression. Acesso em: 21 jul. 2024.        
+         \end{frame}
+
+         \begin{frame}[fragile]{}
+
+    \hspace{2cm}     Obrigada! :)
+    \vspace{1.5cm}
+           \begin{lstlisting}[language=R]
+               print("sextou")
+           \end{lstlisting}
+        \end{frame}
+
+      
+	
+	
+
+        
+\end{document}
